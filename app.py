@@ -1,29 +1,28 @@
 from flask import Flask, render_template, request
-import pandas as pd
 import pickle
 
 app = Flask(__name__)
 
-new_df = pickle.load(open('model/musicrec.pkl', 'rb'))
-similarity = pickle.load(open('model/similarities.pkl', 'rb'))
+# Load model and data from 'model/' directory
+train_df = pickle.load(open('model/musicrec_train_df.pkl', 'rb'))
+tfidf = pickle.load(open('model/tfidf_vectorizer.pkl', 'rb'))
+tfidf_vectors = pickle.load(open('model/tfidf_vectors.pkl', 'rb'))
+tfidf_similarity = pickle.load(open('model/tfidf_similarity.pkl', 'rb'))
 
-def recommend(music):
+def recommend(song_title, top_n=5):
     try:
-        music_index = new_df[new_df['title'] == music].index[0]
-        distances = similarity[music_index]
-        
-        music_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:6]
-        recommended_songs = [new_df.iloc[i[0]].title for i in music_list]
-        
-        return recommended_songs
+        idx = train_df[train_df['title'] == song_title].index[0]
+        sim_scores = list(enumerate(tfidf_similarity[idx]))
+        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:top_n+1]
+        recommended = [train_df.iloc[i[0]].title for i in sim_scores]
+        return recommended
     except IndexError:
         return ["No recommendations found. Try a different song."]
 
-
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('index.html')
-
+    songs = train_df['title'].tolist()
+    return render_template('index.html', songs=songs)
 
 @app.route('/recommend', methods=['POST'])
 def recommend_route():
