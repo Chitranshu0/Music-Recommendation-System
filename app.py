@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 import pickle
+from enhanced_recommendation import recommend_with_analysis, get_song_details
 
 app = Flask(__name__)
 
@@ -10,6 +11,7 @@ tfidf_vectors = pickle.load(open('model/tfidf_vectors.pkl', 'rb'))
 tfidf_similarity = pickle.load(open('model/tfidf_similarity.pkl', 'rb'))
 
 def recommend(song_title, top_n=5):
+    """Legacy function for backward compatibility"""
     try:
         idx = train_df[train_df['title'] == song_title].index[0]
         sim_scores = list(enumerate(tfidf_similarity[idx]))
@@ -27,8 +29,17 @@ def index():
 @app.route('/recommend', methods=['POST'])
 def recommend_route():
     song_name = request.form.get('song_name')
-    recommendations = recommend(song_name)
-    return render_template('recommend.html', selected_song=song_name, recommendations=recommendations)
+    
+    # Use enhanced recommendation system
+    recommendations = recommend_with_analysis(song_name)
+    
+    # Get song details for display
+    song_details = get_song_details(song_name)
+    
+    return render_template('recommend.html', 
+                         selected_song=song_name, 
+                         recommendations=recommendations,
+                         song_details=song_details)
 
 if __name__ == '__main__':
     app.run(debug=True)

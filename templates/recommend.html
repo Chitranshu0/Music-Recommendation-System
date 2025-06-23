@@ -4,16 +4,118 @@
     <meta charset="UTF-8">
     <title>Recommendations</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .recommendation-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .similarity-badge {
+            background: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .song-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .component-section {
+            margin: 10px 0;
+        }
+        .component-title {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 5px;
+        }
+        .component-list {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 3px solid #007bff;
+        }
+        .tag-item {
+            display: inline-block;
+            background: #e9ecef;
+            padding: 3px 8px;
+            margin: 2px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        .song-details {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+        .back-button {
+            background: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .back-button:hover {
+            background: #5a6268;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Recommendations for "{{ selected_song }}"</h1>
-        <ul>
+        <h1>🎵 Recommendations for "{{ selected_song }}"</h1>
+        
+        <!-- Song Details Section -->
+        <div class="song-details">
+            <h3>📋 Song Analysis</h3>
+            <p><strong>Tags:</strong> {{ song_details }}</p>
+        </div>
+
+        <!-- Recommendations -->
+        <h2>🎯 Recommended Songs</h2>
+        {% if recommendations %}
             {% for rec in recommendations %}
-            <li>{{ rec }}</li>
+            <div class="recommendation-card">
+                <div class="similarity-badge">
+                    {{ rec.similarity_percentage }}% Similar
+                </div>
+                <div class="song-title">{{ rec.song }}</div>
+                
+                <div class="component-section">
+                    <div class="component-title">🔍 Core Components (TF-IDF Features):</div>
+                    <div class="component-list">
+                        {% for component in rec.core_components %}
+                            <span class="tag-item">{{ component }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="component-section">
+                    <div class="component-title">🏷️ Common Tags:</div>
+                    <div class="component-list">
+                        {% for tag in rec.common_tags %}
+                            <span class="tag-item">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
             {% endfor %}
-        </ul>
-        <a href="/">Back</a>
+        {% else %}
+            <p>No recommendations found. Try a different song.</p>
+        {% endif %}
+        
+        <a href="/" class="back-button">← Back to Search</a>
     </div>
 </body>
 </html>
