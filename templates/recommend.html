@@ -2,79 +2,198 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Recommendations</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Recommendations</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        .recommendations-container {
+            margin-top: 30px;
+        }
+        
+        .song-details {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border-left: 4px solid #00d4ff;
+        }
+        
+        .song-details h3 {
+            color: #00d4ff;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .song-details p {
+            color: #ffffff;
+            line-height: 1.6;
+        }
+        
+        .recommendations-grid {
+            display: grid;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
         .recommendation-card {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 15px 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
+        
+        .recommendation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(45deg, #00d4ff, #ff6b6b, #4ecdc4);
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+        
+        .recommendation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+        
         .similarity-badge {
-            background: #007bff;
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
             color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 14px;
-            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
             display: inline-block;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
         }
+        
         .song-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 10px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 20px;
+            line-height: 1.3;
         }
+        
         .component-section {
-            margin: 10px 0;
+            margin: 20px 0;
         }
+        
         .component-title {
-            font-weight: bold;
-            color: #555;
-            margin-bottom: 5px;
+            font-weight: 600;
+            color: #00d4ff;
+            margin-bottom: 12px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
         }
+        
+        .component-title::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: #00d4ff;
+            margin-right: 8px;
+            border-radius: 2px;
+        }
+        
         .component-list {
-            background: white;
-            padding: 10px;
-            border-radius: 5px;
-            border-left: 3px solid #007bff;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
+        
         .tag-item {
             display: inline-block;
-            background: #e9ecef;
-            padding: 3px 8px;
-            margin: 2px;
-            border-radius: 12px;
-            font-size: 12px;
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            padding: 6px 12px;
+            margin: 4px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            transition: all 0.3s ease;
         }
-        .song-details {
-            background: #e3f2fd;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border-left: 4px solid #2196f3;
+        
+        .tag-item:hover {
+            background: rgba(0, 212, 255, 0.3);
+            transform: scale(1.05);
         }
+        
+        .no-recommendations {
+            text-align: center;
+            padding: 40px;
+            color: #b0b0b0;
+            font-size: 1.1rem;
+        }
+        
         .back-button {
-            background: #6c757d;
-            color: white;
-            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 15px 30px;
             text-decoration: none;
-            border-radius: 5px;
-            display: inline-block;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
             margin-top: 20px;
         }
+        
         .back-button:hover {
-            background: #5a6268;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            text-decoration: none;
+            color: #ffffff;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .back-button::before {
+            content: "←";
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .recommendations-grid {
+                gap: 20px;
+            }
+            
+            .recommendation-card {
+                padding: 20px;
+            }
+            
+            .song-title {
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎵 Recommendations for "{{ selected_song }}"</h1>
+        <div class="header">
+            <h1>🎯 Recommendations</h1>
+            <p>Based on your selection: "{{ selected_song }}"</p>
+        </div>
         
         <!-- Song Details Section -->
         <div class="song-details">
@@ -83,39 +202,46 @@
         </div>
 
         <!-- Recommendations -->
-        <h2>🎯 Recommended Songs</h2>
-        {% if recommendations %}
-            {% for rec in recommendations %}
-            <div class="recommendation-card">
-                <div class="similarity-badge">
-                    {{ rec.similarity_percentage }}% Similar
-                </div>
-                <div class="song-title">{{ rec.song }}</div>
-                
-                <div class="component-section">
-                    <div class="component-title">🔍 Core Components (TF-IDF Features):</div>
-                    <div class="component-list">
-                        {% for component in rec.core_components %}
-                            <span class="tag-item">{{ component }}</span>
-                        {% endfor %}
+        <div class="recommendations-container">
+            <h2 style="color: #ffffff; margin-bottom: 25px; font-size: 1.8rem;">🎵 Recommended Songs</h2>
+            
+            {% if recommendations %}
+                <div class="recommendations-grid">
+                    {% for rec in recommendations %}
+                    <div class="recommendation-card">
+                        <div class="similarity-badge">
+                            {{ rec.similarity_percentage }}% Similar
+                        </div>
+                        <div class="song-title">{{ rec.song }}</div>
+                        
+                        <div class="component-section">
+                            <div class="component-title">🔍 Core Components (TF-IDF Features)</div>
+                            <div class="component-list">
+                                {% for component in rec.core_components %}
+                                    <span class="tag-item">{{ component }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="component-section">
+                            <div class="component-title">🏷️ Common Tags</div>
+                            <div class="component-list">
+                                {% for tag in rec.common_tags %}
+                                    <span class="tag-item">{{ tag }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
+                    {% endfor %}
                 </div>
-                
-                <div class="component-section">
-                    <div class="component-title">🏷️ Common Tags:</div>
-                    <div class="component-list">
-                        {% for tag in rec.common_tags %}
-                            <span class="tag-item">{{ tag }}</span>
-                        {% endfor %}
-                    </div>
+            {% else %}
+                <div class="no-recommendations">
+                    <p>No recommendations found. Try a different song.</p>
                 </div>
-            </div>
-            {% endfor %}
-        {% else %}
-            <p>No recommendations found. Try a different song.</p>
-        {% endif %}
+            {% endif %}
+        </div>
         
-        <a href="/" class="back-button">← Back to Search</a>
+        <a href="/" class="back-button">Back to Search</a>
     </div>
 </body>
 </html>

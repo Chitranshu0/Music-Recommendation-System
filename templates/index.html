@@ -2,21 +2,61 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music Recommendation System</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <h1>Music Recommendation System</h1>
-        <form action="/recommend" method="post">
-            <label for="song_name">Select a song:</label>
-            <select name="song_name" id="song_name" required>
-                {% for song in songs %}
-                <option value="{{ song }}">{{ song }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit">Recommend</button>
-        </form>
+        <div class="header">
+            <h1>🎵 Music AI</h1>
+            <p>Discover your next favorite song with intelligent recommendations</p>
+        </div>
+        
+        <div class="form-container">
+            <form action="/recommend" method="post" id="recommendForm">
+                <div class="form-group">
+                    <label for="song_name">Select a song to get recommendations:</label>
+                    <select name="song_name" id="song_name" required>
+                        <option value="">Choose a song...</option>
+                        {% for song in songs %}
+                        <option value="{{ song }}">{{ song }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <button type="submit" class="submit-btn">
+                    <span class="btn-text">Get Recommendations</span>
+                    <span class="btn-loading" style="display: none;">
+                        <div class="spinner"></div>
+                        Processing...
+                    </span>
+                </button>
+            </form>
+        </div>
     </div>
+
+    <script>
+        // Add loading animation
+        document.getElementById('recommendForm').addEventListener('submit', function() {
+            const btn = document.querySelector('.submit-btn');
+            const btnText = document.querySelector('.btn-text');
+            const btnLoading = document.querySelector('.btn-loading');
+            
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'flex';
+            btn.disabled = true;
+        });
+
+        // Add smooth focus effects
+        document.getElementById('song_name').addEventListener('focus', function() {
+            this.parentElement.style.transform = 'scale(1.02)';
+        });
+
+        document.getElementById('song_name').addEventListener('blur', function() {
+            this.parentElement.style.transform = 'scale(1)';
+        });
+    </script>
 </body>
 </html>
