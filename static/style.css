@@ -1,55 +1,55 @@
 body {
-    background: #f7f7f7;
-    font-family: Arial, sans-serif;
+    padding: 0px 45px;
+    font-size: large;
+    font-family: Helvetica, Arial, sans-serif;
 }
-.container {
-    max-width: 500px;
-    margin: 60px auto;
-    background: #fff;
-    padding: 30px 40px;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    text-align: center;
+div {
+    padding: 10px 0px;
 }
+
 h1 {
-    color: #333;
-    margin-bottom: 30px;
+    font-style: italic;
 }
-form {
-    margin-bottom: 20px;
+h3, h4 {
+    margin-bottom: 4px;
 }
-select, button {
-    padding: 10px;
-    margin-top: 10px;
-    width: 80%;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+
+select {
+    width: 450px;
+    height: 45px;
+    font-size: 17px;
+    padding-left: 15px;
+    border: 2px solid;
+    border-radius: 12px;
 }
-button {
-    background: #007bff;
-    color: #fff;
-    border: none;
-    cursor: pointer;
+button[type=submit] {
+    padding: 15px;
+    font-size: 15px;
+    font-weight: bold;
+    background-color: rgb(159, 240, 159);
+    border: 2px solid rgb(159, 240, 159);
+    border-radius: 12px;
 }
-button:hover {
-    background: #0056b3;
-}
-ul {
+
+ol {
     list-style: none;
-    padding: 0;
 }
-li {
-    background: #f0f0f0;
-    margin: 8px 0;
+
+table, th, td {
+    border: 2px solid;
     padding: 10px;
-    border-radius: 5px;
 }
-a {
-    display: inline-block;
-    margin-top: 20px;
-    color: #007bff;
-    text-decoration: none;
+table {
+    width: 100%;
+    min-width: 550px;
+    margin-top: 0px;
+    border-collapse: collapse;
 }
-a:hover {
-    text-decoration: underline;
+th {
+    background-color: rgb(159, 240, 159);
+}
+td {
+    padding-left: 10px;
+    font-size: medium;
+    text-align: center;
 }

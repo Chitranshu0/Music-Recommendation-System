@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Music Recommendation System</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="../static/style.css">
 </head>
 <body>
-    <div class="container">
+    <div>
         <h1>Music Recommendation System</h1>
         <form action="/recommend" method="post">
-            <label for="song_name">Select a song:</label>
+            <h4>Select a song:</h4>
             <select name="song_name" id="song_name" required>
                 {% for song in songs %}
                 <option value="{{ song }}">{{ song }}</option>
@@ -17,6 +17,29 @@
             </select>
             <button type="submit">Recommend</button>
         </form>
+        <div>
+            <h3>Recommendation for "{{song_title}}"</h3>
+            <table>
+                <tr>
+                    <th>#</th>
+                    <th>Song title</th>
+                    <th>Artist name</th>
+                    <th>Album/Movie</th>
+                    <th>User rating</th>
+                </tr>
+                <ol>
+                    {% for s_no, title, artist, movie, rating in recommended_songs %}
+                    <tr>
+                        <td>{{s_no}}</td>
+                        <td>{{title}}</td>
+                        <td>{{artist}}</td>
+                        <td>{{movie}}</td>
+                        <td>{{rating}}</td>
+                    </tr>
+                    {% endfor %}
+                </ol>
+            </table>
+        </div>
     </div>
 </body>
 </html>

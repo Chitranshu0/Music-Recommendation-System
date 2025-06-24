@@ -1,13 +1,13 @@
 from flask import Flask, render_template, request
-import pickle
+import pickle, pandas
 
 app = Flask(__name__)
 
 # Load model and data from 'model/' directory
 train_df = pickle.load(open('model/musicrec_train_df.pkl', 'rb'))
-tfidf = pickle.load(open('model/tfidf_vectorizer.pkl', 'rb'))
-tfidf_vectors = pickle.load(open('model/tfidf_vectors.pkl', 'rb'))
 tfidf_similarity = pickle.load(open('model/tfidf_similarity.pkl', 'rb'))
+
+song_df= pandas.read_csv("data/ex.csv")
 
 def recommend(song_title, top_n=5):
     try:
@@ -18,17 +18,37 @@ def recommend(song_title, top_n=5):
         return recommended
     except IndexError:
         return ["No recommendations found. Try a different song."]
+    
+def get_song_data(song_titles):
+    songs_data = []
+    try:
+        for i, song in enumerate(song_titles):
+            song_data = song_df[song_df["Song-Name"]==song]
+            songs_data.append([i+1,
+                song_data["Song-Name"].loc[song_data.index[0]],
+                song_data["Singer/Artists"].loc[song_data.index[0]],
+                song_data["Album/Movie"].loc[song_data.index[0]],
+                song_data["User-Rating"].loc[song_data.index[0]]])
+    except Exception:
+        songs_data = [["NaN", "None", "None", "None", "None"]]
+        
+    return songs_data
 
 @app.route('/', methods=['GET'])
 def index():
     songs = train_df['title'].tolist()
-    return render_template('index.html', songs=songs)
+    song_title = songs[0]
+    recommended_titles = recommend(song_title)
+    song_data = get_song_data(recommended_titles)
+    return render_template('index.html', songs=songs, song_title=song_title, recommended_songs=song_data)
 
 @app.route('/recommend', methods=['POST'])
 def recommend_route():
-    song_name = request.form.get('song_name')
-    recommendations = recommend(song_name)
-    return render_template('recommend.html', selected_song=song_name, recommendations=recommendations)
+    songs = train_df['title'].tolist()
+    song_title = request.form.get('song_name')
+    recommended_titles = recommend(song_title)
+    song_data = get_song_data(recommended_titles)
+    return render_template('index.html', songs=songs, song_title=song_title, recommended_songs=song_data)
 
 if __name__ == '__main__':
     app.run(debug=True)
